@@ -122,7 +122,10 @@ export const Resume: React.FC = observer(() => {
                         <img
                             src={INDICATOR_ILLUSTRATIONS[stepStore.activeStep.code] ?? jamInstPng}
                             alt={intl.formatMessage({id: "label.jamilya"})}
-                            className="h-auto max-h-[520px] w-auto max-w-full"
+                            className={
+                                `h-auto w-auto max-w-full ` +
+                                (stepStore.activeStep.code === "fergana-indicator-9" ? `max-h-[624px]` : `max-h-[520px]`)
+                            }
                         />
                     </div>
                 </div>

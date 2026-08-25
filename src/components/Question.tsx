@@ -1,6 +1,8 @@
 import React from "react";
 import {observer} from "mobx-react-lite";
 
+import {useIntl} from "react-intl";
+
 import {useStores} from "../hooks/use-stores";
 import {IQuestion} from "../types/question";
 import {IoIosCheckbox, IoIosCheckboxOutline, IoIosRadioButtonOff, IoIosRadioButtonOn} from "react-icons/io";
@@ -11,6 +13,7 @@ interface QuestionProps {
 }
 
 export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
+    const intl = useIntl()
     const {stepStore, questionStore, uiStore} = useStores()
 
     return (
@@ -20,7 +23,13 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                 <span className="text-sm lg:text-lg text-blue-900 font-semibold">{num}</span>
             </div>
             <div className="sm:min-w-0 sm:flex-1">
-                <p className="sm:text-2xl font-medium text-gray-900 mb-0">{question.content}</p>
+                <p className="sm:text-2xl font-medium text-gray-900 mb-0">
+                    {question.content}
+                    {
+                        question.isMultiSelect &&
+                        ` (${intl.formatMessage({id: "label.multiSelect.hint"})})`
+                    }
+                </p>
                 <div className="lg:inline-flex rounded-lg shadow-sm mt-6" role="group">
                     {
                         question.answers.map((answer, index) =>
