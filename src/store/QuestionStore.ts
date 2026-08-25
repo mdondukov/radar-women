@@ -25,7 +25,18 @@ export class QuestionStore {
         this._selectAnswers = selectAnswers
     }
 
-    public setSelectAnswer = (stepId: number, questionId: number, answerId: number) => {
+    public setSelectAnswer = (stepId: number, questionId: number, answerId: number, isMultiSelect: boolean = false) => {
+        if (isMultiSelect) {
+            const alreadySelected = this._selectAnswers.some(
+                answer => answer.questionId === questionId && answer.answerId === answerId
+            )
+            this._selectAnswers = alreadySelected
+                ? this._selectAnswers.filter(
+                    answer => !(answer.questionId === questionId && answer.answerId === answerId)
+                )
+                : [...this._selectAnswers, {stepId: stepId, questionId: questionId, answerId: answerId}]
+            return
+        }
         const selectAnswers = this._selectAnswers.filter(answer => answer.questionId !== questionId)
         selectAnswers.push({stepId: stepId, questionId: questionId, answerId: answerId})
         this._selectAnswers = selectAnswers
@@ -62,9 +73,10 @@ export class QuestionStore {
     }
 
     public isAllQuestionsComplete = (stepId: number) => {
-        const questionsLength = this._questions.filter(q => q.stepId === stepId).length
-        const completeLength = this._selectAnswers.filter(a => a.stepId === stepId).length
-        return questionsLength === completeLength
+        const questions = this._questions.filter(q => q.stepId === stepId)
+        return questions.every(
+            question => this._selectAnswers.some(a => a.questionId === question.id)
+        )
     }
 
     public isAnswerSelect = (questionId: number, answerId: number) => {

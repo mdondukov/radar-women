@@ -2,6 +2,7 @@ export interface IQuestion {
     id: number
     stepId: number
     content: string
+    isMultiSelect: boolean
     answers: IAnswer[]
 }
 

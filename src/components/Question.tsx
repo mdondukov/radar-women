@@ -3,7 +3,7 @@ import {observer} from "mobx-react-lite";
 
 import {useStores} from "../hooks/use-stores";
 import {IQuestion} from "../types/question";
-import {IoIosRadioButtonOff, IoIosRadioButtonOn} from "react-icons/io";
+import {IoIosCheckbox, IoIosCheckboxOutline, IoIosRadioButtonOff, IoIosRadioButtonOn} from "react-icons/io";
 
 interface QuestionProps {
     question: IQuestion
@@ -28,7 +28,7 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                                 ? <button key={answer.id}
                                           type="button"
                                           onClick={() => {
-                                              questionStore.setSelectAnswer(stepStore.activeStep.id, question.id, answer.id)
+                                              questionStore.setSelectAnswer(stepStore.activeStep.id, question.id, answer.id, question.isMultiSelect)
                                               if (questionStore.isAllQuestionsComplete(stepStore.activeStep.id)) {
                                                   stepStore.setCompleteStep(stepStore.activeStep.id)
                                               }
@@ -44,7 +44,7 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                                 : <div
                                     key={answer.id}
                                     onClick={() => {
-                                        questionStore.setSelectAnswer(stepStore.activeStep.id, question.id, answer.id)
+                                        questionStore.setSelectAnswer(stepStore.activeStep.id, question.id, answer.id, question.isMultiSelect)
                                         if (questionStore.isAllQuestionsComplete(stepStore.activeStep.id)) {
                                             stepStore.setCompleteStep(stepStore.activeStep.id)
                                         }
@@ -56,9 +56,17 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                                         `${questionStore.isAnswerSelect(question.id, answer.id) ? ` text-blue-800` : ``}`
                                     }>
                                         {
-                                            questionStore.isAnswerSelect(question.id, answer.id)
-                                                ? <IoIosRadioButtonOn size={22}/>
-                                                : <IoIosRadioButtonOff size={22}/>
+                                            question.isMultiSelect
+                                                ? (
+                                                    questionStore.isAnswerSelect(question.id, answer.id)
+                                                        ? <IoIosCheckbox size={22}/>
+                                                        : <IoIosCheckboxOutline size={22}/>
+                                                )
+                                                : (
+                                                    questionStore.isAnswerSelect(question.id, answer.id)
+                                                        ? <IoIosRadioButtonOn size={22}/>
+                                                        : <IoIosRadioButtonOff size={22}/>
+                                                )
                                         }
                                     </div>
                                     <div className="font-medium text-sm">
