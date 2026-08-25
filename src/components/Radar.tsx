@@ -96,7 +96,7 @@ export const Radar: React.FC = observer(() => {
                 {stepStore.activeStep.name}
             </h1>
 
-            <div className="sm:text-2xl font-medium text-blue-800 mb-6 lg:mb-12">
+            <div className="sm:text-2xl font-medium text-gray-900 mb-6 lg:mb-12">
                 <p>{intl.formatMessage({id: "label.radar.congrats"})}</p>
                 <p>{intl.formatMessage({id: "label.radar.info"})}</p>
             </div>
@@ -177,7 +177,7 @@ export const Radar: React.FC = observer(() => {
                 </p>
             </div>
 
-            <div className="sm:text-2xl font-medium text-blue-800 mb-6 lg:mb-12">
+            <div className="sm:text-2xl font-medium text-gray-900 mb-6 lg:mb-12">
                 <p>{intl.formatMessage({id: "label.radar.impacts.info"})}</p>
             </div>
 

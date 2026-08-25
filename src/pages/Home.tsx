@@ -36,7 +36,7 @@ const Home: React.FC = observer(() => {
                     <h1 className="text-3xl sm:text-5xl text-lime-500 font-bold uppercase mb-6 lg:mb-12">
                         {intl.formatMessage({id: "page.home.name"})}
                     </h1>
-                    <div className="sm:text-2xl font-medium text-blue-800 mb-6 lg:mb-12">
+                    <div className="markdown-body sm:text-2xl font-medium text-gray-900 mb-6 lg:mb-12">
                         <ReactMarkdown children={intro} remarkPlugins={[remarkGfm]}/>
                     </div>
                     <MainButton path="/poll" name={intl.formatMessage({id: "label.start"})}/>

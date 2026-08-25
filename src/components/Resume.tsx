@@ -55,7 +55,7 @@ export const Resume: React.FC = observer(() => {
     return (
         <div className="resume xl:grid xl:grid-cols-12">
             <div className="xl:col-span-8">
-                <div className="sm:text-2xl font-bold text-blue-800 mb-4">
+                <div className="sm:text-2xl font-bold text-gray-900 mb-4">
                     <p>
                         {
                             intl.formatMessage(
@@ -67,7 +67,7 @@ export const Resume: React.FC = observer(() => {
                 </div>
                 {
                     stepStore.activeStep.descr && (
-                        <div className="markdown-body sm:text-2xl font-medium text-blue-800 mb-6 lg:mb-12">
+                        <div className="markdown-body sm:text-2xl font-medium text-gray-900 mb-6 lg:mb-12">
                             <ReactMarkdown
                                 children={stepStore.activeStep.descr}
                                 remarkPlugins={[remarkGfm]}
