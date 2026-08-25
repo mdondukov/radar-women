@@ -39,7 +39,7 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                                                   ? ` z-20 ring-1 ring-lime-700 text-lime-800 bg-lime-300`
                                                   : ` bg-lime-200`}`
                                           }>
-                                    {answer.content}
+                                    {answer.content.toLowerCase()}
                                 </button>
                                 : <div
                                     key={answer.id}
@@ -62,7 +62,7 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                                         }
                                     </div>
                                     <div className="font-medium text-sm">
-                                        <p>{answer.content}</p>
+                                        <p>{answer.content.toLowerCase()}</p>
                                     </div>
                                 </div>
                         )

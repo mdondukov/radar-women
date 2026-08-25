@@ -24,7 +24,7 @@ export const Navigation: React.FC = observer(() => {
 
     return (
         <>
-            <div className="md:mb-10 mb-6 overflow-x-auto h-[50px] md:h-auto">
+            <div className="print:hidden md:mb-10 mb-6 overflow-x-auto h-[50px] md:h-auto">
                 <div className="flex">
                     {
                         stepStore.steps.map((step, index) =>

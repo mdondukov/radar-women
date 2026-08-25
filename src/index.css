@@ -18,7 +18,7 @@ h1, h2, h3, h4 {
     font-family: 'PT Sans Narrow', sans-serif;
 }
 
-.radar-wrap {
+.radar-wrap.mob {
     overflow-x: scroll;
     scroll-snap-type: x mandatory;
 }
@@ -85,4 +85,19 @@ p:last-child {
 
 .markdown-body a:hover, .resume a:hover, ul.recommendations a:hover {
     opacity: 0.8;
+}
+
+@media print {
+    body {
+        background-color: #ffffff;
+    }
+
+    .bg-white.rounded-xl {
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+    }
+
+    .radar-recommendation-item {
+        break-inside: avoid;
+    }
 }

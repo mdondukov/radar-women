@@ -8,8 +8,8 @@ import partnersPng from "../../assets/img/partners.png";
 export const Header: React.FC = () => {
     const intl = useIntl()
     return (
-        <div className="md:flex md:gap-20 md:justify-between md:items-center mb-6 lg:mb-12">
-            <div className="lg:mb-0 mb-6 mx-auto md:mx-0">
+        <div className="md:flex print:flex md:gap-20 print:gap-20 md:justify-between print:justify-between md:items-center print:items-center mb-6 lg:mb-12">
+            <div className="lg:mb-0 print:mb-0 mb-6 mx-auto md:mx-0 print:mx-0">
                 <Link to="/">
                     <img
                         src={logoPng}
