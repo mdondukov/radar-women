@@ -1,5 +1,7 @@
 import React from "react";
 import {observer} from "mobx-react-lite";
+import remarkGfm from "remark-gfm";
+import ReactMarkdown from "react-markdown";
 
 import {Loader, Questions, Resume} from "./index";
 import {useStores} from "../hooks/use-stores";
@@ -28,6 +30,17 @@ export const Assessment: React.FC = observer(() => {
             <h1 className="text-3xl sm:text-5xl text-lime-500 font-bold uppercase mb-6 sm:mb-12">
                 {stepStore.activeStep.name}
             </h1>
+
+            {
+                stepStore.activeStep.intro && (
+                    <div className="markdown-body sm:text-2xl font-medium text-blue-800 mb-6 lg:mb-12">
+                        <ReactMarkdown
+                            children={stepStore.activeStep.intro}
+                            remarkPlugins={[remarkGfm]}
+                        />
+                    </div>
+                )
+            }
 
             {
                 getComponent(stepStore.isResume)
