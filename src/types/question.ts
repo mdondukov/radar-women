@@ -10,6 +10,7 @@ export interface IAnswer {
     content: string
     descr: string | null
     weight: number
+    recommendation: string | null
 }
 
 export interface IAnswerSelect {

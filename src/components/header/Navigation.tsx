@@ -3,9 +3,10 @@ import {observer} from "mobx-react-lite";
 import {useIntl} from "react-intl";
 import {AiOutlineArrowRight, AiOutlineRadarChart} from "react-icons/ai";
 import {BsFillGeoAltFill} from "react-icons/bs";
-import {FaCar, FaCity, FaHeartbeat, FaRecycle, FaTree, FaUsers} from "react-icons/fa";
+import {FaCity, FaDove, FaTree, FaUsers, FaVenus} from "react-icons/fa";
+import {GiTap} from "react-icons/gi";
 import {MdAgriculture, MdSanitizer} from "react-icons/md";
-import {RiAlarmWarningFill, RiLightbulbFlashFill} from "react-icons/ri";
+import {RiAlarmWarningFill} from "react-icons/ri";
 
 import {useStores} from "../../hooks/use-stores";
 import {IStep} from "../../types/step";
@@ -94,30 +95,28 @@ const getColor = (stepId: number, activeId: number, isCompleteStep: boolean) => 
 const getIcon = (step: IStep, windowWidth: number) => {
     const iconSize = windowWidth > 768 + 1 ? ICON_SIZE : ICON_SIZE_MOBILE
 
-    switch (step.id) {
-        case 1:
+    switch (step.code) {
+        case "fergana-region":
             return <BsFillGeoAltFill size={iconSize} title={step.name}/>
-        case 2:
-            return <FaUsers size={iconSize} title={step.name}/>
-        case 3:
-            return <MdAgriculture size={iconSize} title={step.name}/>
-        case 4:
-            return <RiLightbulbFlashFill size={iconSize} title={step.name}/>
-        case 5:
-            return <FaHeartbeat size={iconSize} title={step.name}/>
-        case 6:
+        case "fergana-indicator-1": // Окружающая среда
             return <FaTree size={iconSize} title={step.name}/>
-        case 7:
-            return <FaCar size={iconSize} title={step.name}/>
-        case 8:
+        case "fergana-indicator-2": // Сельское хозяйство
+            return <MdAgriculture size={iconSize} title={step.name}/>
+        case "fergana-indicator-3": // Ирригационные ресурсы и инфраструктура
+            return <GiTap size={iconSize} title={step.name}/>
+        case "fergana-indicator-4": // Вода, санитария, гигиена
             return <MdSanitizer size={iconSize} title={step.name}/>
-        case 9:
+        case "fergana-indicator-5": // Среда населённых пунктов
             return <FaCity size={iconSize} title={step.name}/>
-        case 10:
+        case "fergana-indicator-6": // Потенциал местного сообщества
+            return <FaUsers size={iconSize} title={step.name}/>
+        case "fergana-indicator-7": // Гендер и климатическая устойчивость
+            return <FaVenus size={iconSize} title={step.name}/>
+        case "fergana-indicator-8": // Климатические риски и социальная напряжённость
             return <RiAlarmWarningFill size={iconSize} title={step.name}/>
-        case 11:
-            return <FaRecycle size={iconSize} title={step.name}/>
-        case 12:
+        case "fergana-indicator-9": // Механизмы миростроительства
+            return <FaDove size={iconSize} title={step.name}/>
+        case "fergana-radar":
             return <AiOutlineRadarChart size={iconSize} title={step.name}/>
         default:
             return <AiOutlineArrowRight size={iconSize} title={step.name}/>

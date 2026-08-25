@@ -4,7 +4,7 @@ import {observer} from "mobx-react-lite";
 
 import {useStores} from "../hooks/use-stores";
 import {fetchIndicators} from "../http/api";
-import {Loader} from "./index";
+import {Linkify, Loader} from "./index";
 import remarkGfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
 import {useIntl} from "react-intl";
@@ -35,11 +35,11 @@ export const Radar: React.FC = observer(() => {
 
     return (
         <>
-            <h1 className="text-2xl sm:text-4xl text-lime-500 font-bold uppercase mb-6 sm:mb-12">
+            <h1 className="text-3xl sm:text-5xl text-lime-500 font-bold uppercase mb-6 sm:mb-12">
                 {stepStore.activeStep.name}
             </h1>
 
-            <div className="sm:text-lg font-medium text-blue-800 mb-6 lg:mb-12">
+            <div className="sm:text-2xl font-medium text-blue-800 mb-6 lg:mb-12">
                 <p>{intl.formatMessage({id: "label.radar.congrats"})}</p>
                 <p>{intl.formatMessage({id: "label.radar.info"})}</p>
             </div>
@@ -77,13 +77,13 @@ export const Radar: React.FC = observer(() => {
                         isInteractive={false}
                         theme={
                             {
-                                "fontFamily": "'Montserrat', sans-serif",
+                                "fontFamily": "'PT Sans', sans-serif",
                                 "fontSize": 15,
                                 axis: {
                                     ticks: {
                                         text: {
-                                            "fontWeight": 500,
-                                            "fontSize": uiStore.windowDimensions.width < 640 ? 10 : 12,
+                                            "fontWeight": 700,
+                                            "fontSize": uiStore.windowDimensions.width < 640 ? 13 : 16,
                                         }
                                     }
                                 }
@@ -93,28 +93,80 @@ export const Radar: React.FC = observer(() => {
                 </div>
             </div>
 
-            <div className="sm:text-lg font-medium text-blue-800 mb-6 lg:mb-12">
+            <div className="sm:text-2xl font-medium text-blue-800 mb-6 lg:mb-12">
                 <p>{intl.formatMessage({id: "label.radar.impacts.info"})}</p>
             </div>
 
             <div className="bg-white rounded-xl p-10">
-                <span className="text-xs sm:text-sm text-blue-800 font-medium uppercase mb-2">
+                <span className="text-sm sm:text-lg text-blue-800 font-medium uppercase mb-2">
                     {regionStore.getRegion(regionStore.selectRegion.regionId).name}
                 </span>
 
-                <h3 className="text-lg sm:text-2xl text-blue-800 font-bold uppercase mb-6">
+                <h3 className="text-2xl sm:text-4xl text-blue-800 font-bold uppercase mb-6">
                     {regionStore.getArea(regionStore.selectRegion.areaId).name}
                 </h3>
 
-                <p className="max-sm:text-sm mb-6">{regionStore.getArea(regionStore.selectRegion.areaId).descr}</p>
+                <p className="sm:text-xl text-gray-900 mb-6">{regionStore.getArea(regionStore.selectRegion.areaId).descr}</p>
 
-                <div className={uiStore.windowDimensions.width < 640 ? "area-impact mob" : "area-impact"}>
+                <div className={
+                    (uiStore.windowDimensions.width < 640 ? "markdown-body mob" : "markdown-body") + " sm:text-xl text-gray-900"
+                }>
                     <ReactMarkdown
                         children={regionStore.getArea(regionStore.selectRegion.areaId).impact}
                         remarkPlugins={[remarkGfm]}
                     />
                 </div>
             </div>
+
+            {
+                summaryStore.indicators.some(
+                    indicator => questionStore.getRecommendations(indicator.stepId).length > 0 || indicator.riskText
+                ) && (
+                    <div className="bg-white rounded-xl p-10 mt-6 lg:mt-12">
+                        <h3 className="text-2xl sm:text-4xl text-blue-800 font-bold uppercase mb-6">
+                            {intl.formatMessage({id: "label.recommendations"})}
+                        </h3>
+                        {
+                            summaryStore.indicators.map(indicator => {
+                                const recommendations = questionStore.getRecommendations(indicator.stepId)
+                                if (recommendations.length === 0 && !indicator.riskText) {
+                                    return null
+                                }
+                                return (
+                                    <div key={indicator.stepId} className="mb-8 last:mb-0">
+                                        <h4 className="text-lg sm:text-3xl text-blue-800 font-bold uppercase mb-3">
+                                            {indicator.name}
+                                        </h4>
+                                        {
+                                            recommendations.length > 0 && (
+                                                <div className="sm:text-xl text-gray-900 mb-3">
+                                                    <ul className="list-disc recommendations">
+                                                        {
+                                                            recommendations.map(recommendation =>
+                                                                <li key={recommendation}><Linkify text={recommendation}/></li>
+                                                            )
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            )
+                                        }
+                                        {
+                                            indicator.riskText && (
+                                                <div className="markdown-body sm:text-xl text-gray-900">
+                                                    <ReactMarkdown
+                                                        children={indicator.riskText}
+                                                        remarkPlugins={[remarkGfm]}
+                                                    />
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                )
+            }
         </>
     )
 })

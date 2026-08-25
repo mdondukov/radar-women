@@ -4,14 +4,18 @@
 
 body {
     margin: 0;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'PT Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #F8F7ED;
+    background-color: #F7F2FB;
 }
 
 .logo {
     width: 300px;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'PT Sans Narrow', sans-serif;
 }
 
 .radar-wrap {
@@ -35,36 +39,50 @@ p:last-child {
     margin-bottom: 0;
 }
 
-.area-impact h3 {
+/* Shared styling for every block of markdown-rendered content (ReactMarkdown
+   output) and for hand-built recommendation lists — applied directly on the
+   wrapping element itself rather than relying on some ancestor class, so it
+   can never be silently skipped just because of where the block sits. */
+.markdown-body h3 {
     font-weight: 700;
-    font-size: 1.2rem;
-    line-height: 2rem;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
     text-transform: uppercase;
-    /*color: rgb(132 204 22);*/
-    color: rgb(30 64 175);
+    color: #003D6C;
     margin-bottom: 1rem;
 }
 
-.area-impact.mob h3 {
-    font-size: 1rem;
-    line-height: 1.25rem;
+.markdown-body.mob h3 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
 }
 
-.area-impact ul {
-    list-style-type: inherit;
+.markdown-body ul, ul.recommendations {
+    list-style-type: disc;
     list-style-position: outside;
     margin-bottom: 1rem;
-    padding-left: 1rem;
+    padding-left: 1.4em;
 }
 
-.area-impact.mob p, .area-impact.mob ul {
+.markdown-body ul li, ul.recommendations li {
+    margin-bottom: 0.5em;
+}
+
+.markdown-body ul li:last-child, ul.recommendations li:last-child {
+    margin-bottom: 0;
+}
+
+.markdown-body.mob p, .markdown-body.mob ul {
     font-size: 0.875rem;
     line-height: 1.25rem;
 }
 
-.resume ul {
-    list-style-type: inherit;
-    list-style-position: outside;
-    margin-bottom: 1rem;
-    padding-left: 1rem;
+.markdown-body a, .resume a, ul.recommendations a {
+    color: #0060A8;
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.markdown-body a:hover, .resume a:hover, ul.recommendations a:hover {
+    opacity: 0.8;
 }

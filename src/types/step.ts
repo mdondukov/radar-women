@@ -1,5 +1,6 @@
 export interface IStep {
     id: number
+    code: string
     name: string
     descr: string | null
     type: StepType

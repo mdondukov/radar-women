@@ -46,7 +46,7 @@ export const Region: React.FC = observer(() => {
 
     return (
         <>
-            <h1 className="text-2xl sm:text-4xl text-lime-500 font-bold uppercase mb-6 lg:mb-12">
+            <h1 className="text-3xl sm:text-5xl text-lime-500 font-bold uppercase mb-6 lg:mb-12">
                 {stepStore.activeStep.name}
             </h1>
             <div className="w-full relative">
@@ -132,7 +132,7 @@ export const Region: React.FC = observer(() => {
                                     }}
                                     className="text-blue-800 hover:opacity-75 absolute -top-6 -right-6 cursor-pointer"
                                 />
-                                <h2 className="text-xl sm:text-2xl text-lime-500 font-bold uppercase mb-6">
+                                <h2 className="text-2xl sm:text-3xl text-lime-500 font-bold uppercase mb-6">
                                     {regionStore.getRegion(regionStore.selectRegion.regionId).name}
                                 </h2>
                                 <div className="mb-6">

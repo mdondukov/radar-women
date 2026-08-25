@@ -20,7 +20,7 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                 <span className="text-sm lg:text-lg text-blue-900 font-semibold">{num}</span>
             </div>
             <div className="sm:min-w-0 sm:flex-1">
-                <p className="sm:text-lg font-medium text-gray-900 mb-0">{question.content}</p>
+                <p className="sm:text-2xl font-medium text-gray-900 mb-0">{question.content}</p>
                 <div className="lg:inline-flex rounded-lg shadow-sm mt-6" role="group">
                     {
                         question.answers.map((answer, index) =>
