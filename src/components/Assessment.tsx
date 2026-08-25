@@ -29,13 +29,13 @@ export const Assessment: React.FC = observer(() => {
         <>
             <h1 className={
                 `text-3xl sm:text-5xl text-lime-500 font-bold uppercase ` +
-                (stepStore.activeStep.intro ? `mb-2 sm:mb-3` : `mb-6 sm:mb-12`)
+                (stepStore.activeStep.intro && !stepStore.isResume ? `mb-2 sm:mb-3` : `mb-6 sm:mb-12`)
             }>
                 {stepStore.activeStep.name}
             </h1>
 
             {
-                stepStore.activeStep.intro && (
+                stepStore.activeStep.intro && !stepStore.isResume && (
                     <div className="markdown-body sm:text-2xl font-medium text-blue-800 mb-10 lg:mb-16">
                         <ReactMarkdown
                             children={stepStore.activeStep.intro}
