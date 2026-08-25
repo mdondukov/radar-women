@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #F8F7ED;
+}
+
+.logo {
+    width: 300px;
+}
+
+.radar-wrap {
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+}
+
+.radar {
+    scroll-snap-align: center;
+}
+
+.radar text {
+    font-weight: 500;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+.area-impact h3 {
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 2rem;
+    text-transform: uppercase;
+    /*color: rgb(132 204 22);*/
+    color: rgb(30 64 175);
+    margin-bottom: 1rem;
+}
+
+.area-impact.mob h3 {
+    font-size: 1rem;
+    line-height: 1.25rem;
+}
+
+.area-impact ul {
+    list-style-type: inherit;
+    list-style-position: outside;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+}
+
+.area-impact.mob p, .area-impact.mob ul {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.resume ul {
+    list-style-type: inherit;
+    list-style-position: outside;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+}
