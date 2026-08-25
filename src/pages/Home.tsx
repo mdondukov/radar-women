@@ -47,7 +47,7 @@ const Home: React.FC = observer(() => {
                             <img
                                 src={jamStartPng}
                                 alt={intl.formatMessage({id: "label.jamilya"})}
-                                className="h-[520px]"
+                                className="h-auto max-h-[520px] w-auto max-w-full"
                             />
                         </div>
                     </div>

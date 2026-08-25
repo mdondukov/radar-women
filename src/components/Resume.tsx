@@ -122,7 +122,7 @@ export const Resume: React.FC = observer(() => {
                         <img
                             src={INDICATOR_ILLUSTRATIONS[stepStore.activeStep.code] ?? jamInstPng}
                             alt={intl.formatMessage({id: "label.jamilya"})}
-                            className="h-[520px]"
+                            className="h-auto max-h-[520px] w-auto max-w-full"
                         />
                     </div>
                 </div>
