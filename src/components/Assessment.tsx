@@ -36,7 +36,7 @@ export const Assessment: React.FC = observer(() => {
 
             {
                 stepStore.activeStep.intro && !stepStore.isResume && (
-                    <div className="markdown-body sm:text-2xl font-medium text-gray-900 mb-10 lg:mb-16">
+                    <div className="markdown-body sm:text-2xl font-medium text-gray-600 mb-10 lg:mb-16">
                         <ReactMarkdown
                             children={stepStore.activeStep.intro}
                             remarkPlugins={[remarkGfm]}
