@@ -5,7 +5,9 @@ export interface ISummary {
 export interface IIndicator {
     stepId: number
     name: string
+    nameSecondary: string | null
     value: number
     riskZone: "high" | "medium" | "low"
     riskText: string | null
+    riskTextSecondary: string | null
 }

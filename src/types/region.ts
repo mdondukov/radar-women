@@ -11,7 +11,9 @@ export interface IArea {
     id: number
     name: string
     descr: string
+    descrSecondary: string | null
     impact: string
+    impactSecondary: string | null
     ord: number
 }
 

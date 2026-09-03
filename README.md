@@ -29,6 +29,11 @@ Home  →  Instruction  →  Poll
                            └─ Radar step          (chart + collected recommendations)
 ```
 
+Показатели can be filled in any order — the header icons are all clickable
+once a region is picked. The region stays first (the radar dereferences the
+chosen area) and the radar stays last: it averages every indicator, so
+opening it early would score unanswered ones as zero.
+
 Each "показатель" (indicator) is one assessment step: a `Questions` screen,
 then — once every question in that step is answered — a `Resume` screen
 (average score, an optional `step.descr` risk-zone narrative, and a
@@ -56,7 +61,9 @@ src/
                  /v1/{PROJECT_CODE}/poll/...)
   i18n/        — messages-ru.json / messages-ky.json (UI chrome strings —
                  the questionnaire content itself is server-side i18n,
-                 resolved by radar_api per the `locale` header)
+                 resolved by radar_api per the `locale` header; the app also
+                 sends `secondary-locale` and shows both languages at once,
+                 see UIStore.secondaryLocale / contentLocale)
   types/       — TS mirrors of the backend's Pydantic schemas
 public/md/     — static markdown shown outside the questionnaire content
                  (intro/welcome/tutorial/farewell, ru+ky)

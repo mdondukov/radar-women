@@ -1,5 +1,5 @@
 import {makeAutoObservable, observable} from "mobx";
-import {getDefaultUserLocale, HEADER_LOCALE} from "../utils";
+import {getDefaultUserLocale, HEADER_LOCALE, SECONDARY_LOCALE} from "../utils";
 
 const HEADER_HEIGHT = 100.6
 
@@ -10,10 +10,12 @@ export interface IWindowDimensions {
 
 export class UIStore {
     private _locale: string
+    private _contentLocale: string
     private _windowDimensions: IWindowDimensions
 
     constructor() {
         this._locale = getDefaultUserLocale()
+        this._contentLocale = this._locale
         this._windowDimensions = {
             width: window.innerWidth,
             height: window.innerHeight
@@ -27,7 +29,14 @@ export class UIStore {
 
     public setLocale = (locale: string) => {
         this._locale = locale
+        this._contentLocale = locale
         localStorage.setItem(HEADER_LOCALE, locale)
+    }
+
+    /** Language of the information and recommendation blocks, switched by the
+     *  reader per block set without changing the language of the whole site. */
+    public setContentLocale = (locale: string) => {
+        this._contentLocale = locale
     }
 
     public setWindowDimensions = (dimensions: IWindowDimensions) => {
@@ -36,6 +45,19 @@ export class UIStore {
 
     public get locale(): string {
         return this._locale
+    }
+
+    /** The other language — shown as a mirror under every question and answer. */
+    public get secondaryLocale(): string {
+        return SECONDARY_LOCALE[this._locale] ?? "ky"
+    }
+
+    public get contentLocale(): string {
+        return this._contentLocale
+    }
+
+    public get isSecondaryContent(): boolean {
+        return this._contentLocale !== this._locale
     }
 
     public get windowDimensions(): IWindowDimensions {

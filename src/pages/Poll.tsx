@@ -15,7 +15,7 @@ const Poll: React.FC = observer(() => {
 
     React.useEffect(() => {
         stepStore.setLoading(true)
-        fetchSteps(uiStore.locale).then(response => {
+        fetchSteps(uiStore.locale, uiStore.secondaryLocale).then(response => {
             stepStore.setSteps(response.data)
             stepStore.setActive(response.data[0].id)
             stepStore.setLoading(false)

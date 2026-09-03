@@ -13,7 +13,7 @@ export const Region: React.FC = observer(() => {
 
     React.useEffect(() => {
         regionStore.setLoading(true)
-        fetchRegions(uiStore.locale).then(response => {
+        fetchRegions(uiStore.locale, uiStore.secondaryLocale).then(response => {
             regionStore.setRegions(response.data)
             regionStore.setLoading(false)
         }).catch(error => {

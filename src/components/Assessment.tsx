@@ -3,7 +3,8 @@ import {observer} from "mobx-react-lite";
 import remarkGfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
 
-import {Loader, Questions, Resume} from "./index";
+import {ContentLangButton, Loader, Questions, Resume} from "./index";
+import {pickLocale} from "../utils";
 import {useStores} from "../hooks/use-stores";
 import {fetchAssessment} from "../http/api";
 
@@ -12,7 +13,7 @@ export const Assessment: React.FC = observer(() => {
 
     React.useEffect(() => {
         questionStore.setLoading(true)
-        fetchAssessment(uiStore.locale).then(response => {
+        fetchAssessment(uiStore.locale, uiStore.secondaryLocale).then(response => {
             questionStore.setQuestions(response.data)
             questionStore.setLoading(false)
         }).catch(error => {
@@ -36,11 +37,18 @@ export const Assessment: React.FC = observer(() => {
 
             {
                 stepStore.activeStep.intro && !stepStore.isResume && (
-                    <div className="markdown-body sm:text-2xl font-medium text-gray-600 mb-10 lg:mb-16">
-                        <ReactMarkdown
-                            children={stepStore.activeStep.intro}
-                            remarkPlugins={[remarkGfm]}
-                        />
+                    <div className="mb-10 lg:mb-16">
+                        <ContentLangButton/>
+                        <div className="markdown-body sm:text-2xl font-medium text-gray-600">
+                            <ReactMarkdown
+                                children={pickLocale(
+                                    stepStore.activeStep.intro,
+                                    stepStore.activeStep.introSecondary,
+                                    uiStore.isSecondaryContent
+                                ) ?? ""}
+                                remarkPlugins={[remarkGfm]}
+                            />
+                        </div>
                     </div>
                 )
             }

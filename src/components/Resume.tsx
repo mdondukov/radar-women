@@ -17,6 +17,8 @@ import {useIntl} from "react-intl";
 import {NextButton} from "./buttons/NextButton";
 import {Linkify} from "./common/Linkify";
 import {fetchIndicators} from "../http/api";
+import {ContentLangButton} from "./buttons/ContentLangButton";
+import {pickLocale} from "../utils";
 
 // показатель-specific illustration, keyed by step.code; falls back to the
 // generic instruction illustration for any step without a dedicated one
@@ -35,22 +37,28 @@ const INDICATOR_ILLUSTRATIONS: Record<string, string> = {
 
 export const Resume: React.FC = observer(() => {
     const intl = useIntl()
-    const {stepStore, questionStore} = useStores()
+    const {stepStore, questionStore, uiStore, messageStore} = useStores()
     const [riskText, setRiskText] = React.useState<string | null>(null)
+    const [riskTextSecondary, setRiskTextSecondary] = React.useState<string | null>(null)
 
     React.useEffect(() => {
         const stepId = stepStore.activeStep.id
         const answers = questionStore.selectAnswers.filter(a => a.stepId === stepId)
         setRiskText(null)
-        fetchIndicators(null, answers).then(response => {
+        setRiskTextSecondary(null)
+        fetchIndicators(null, answers, uiStore.locale, uiStore.secondaryLocale).then(response => {
             const indicator = response.data.indicators.find(
                 (i: { stepId: number }) => i.stepId === stepId
             )
             setRiskText(indicator?.riskText ?? null)
+            setRiskTextSecondary(indicator?.riskTextSecondary ?? null)
         }).catch(e => console.error(e))
-    }, [stepStore.activeStep.id])
+    }, [stepStore.activeStep.id, uiStore.locale, uiStore.secondaryLocale])
 
-    const recommendations = questionStore.getRecommendations(stepStore.activeStep.id)
+    const recommendations = questionStore.getRecommendations(
+        stepStore.activeStep.id, uiStore.isSecondaryContent
+    )
+    const shownRiskText = pickLocale(riskText, riskTextSecondary, uiStore.isSecondaryContent)
 
     return (
         <div className="resume xl:grid xl:grid-cols-12">
@@ -66,10 +74,19 @@ export const Resume: React.FC = observer(() => {
                     </p>
                 </div>
                 {
+                    (stepStore.activeStep.descr || recommendations.length > 0 || riskText) && (
+                        <ContentLangButton/>
+                    )
+                }
+                {
                     stepStore.activeStep.descr && (
                         <div className="markdown-body sm:text-2xl font-medium text-gray-900 mb-6 lg:mb-12">
                             <ReactMarkdown
-                                children={stepStore.activeStep.descr}
+                                children={pickLocale(
+                                    stepStore.activeStep.descr,
+                                    stepStore.activeStep.descrSecondary,
+                                    uiStore.isSecondaryContent
+                                ) ?? ""}
                                 remarkPlugins={[remarkGfm]}
                             />
                         </div>
@@ -79,7 +96,7 @@ export const Resume: React.FC = observer(() => {
                     (recommendations.length > 0 || riskText) && (
                         <div className="bg-white rounded-xl p-10 mb-6 lg:mb-12">
                             <h3 className="text-2xl sm:text-4xl text-blue-800 font-bold uppercase mb-6">
-                                {intl.formatMessage({id: "label.recommendations"})}
+                                {messageStore.messages[uiStore.contentLocale]["label.recommendations"]}
                             </h3>
                             {
                                 recommendations.length > 0 && (
@@ -95,10 +112,10 @@ export const Resume: React.FC = observer(() => {
                                 )
                             }
                             {
-                                riskText && (
+                                shownRiskText && (
                                     <div className="markdown-body sm:text-xl text-gray-900">
                                         <ReactMarkdown
-                                            children={riskText}
+                                            children={shownRiskText}
                                             remarkPlugins={[remarkGfm]}
                                         />
                                     </div>

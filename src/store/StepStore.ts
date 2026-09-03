@@ -1,6 +1,6 @@
 import {makeAutoObservable} from "mobx";
 
-import {IStep} from "../types/step";
+import {IStep, StepType} from "../types/step";
 
 export class StepStore {
     private _steps: IStep[]
@@ -52,12 +52,20 @@ export class StepStore {
     }
 
     public setIncompleteStep = (stepId: number) => {
-        this._complete = this._complete.filter(id => id === stepId)
+        this._complete = this._complete.filter(id => id !== stepId)
     }
 
     public isCompleteStep = (stepId: number) => {
         const find = this._complete.find(id => id === stepId)
         return !!find
+    }
+
+    /** The radar averages every indicator, so it may only open once all of them
+     *  are answered — otherwise the empty ones would be scored as zero and the
+     *  chart would show a result the reader never gave. */
+    public get isAllAssessmentComplete(): boolean {
+        const assessments = this._steps.filter(step => step.type === StepType.ASSESSMENT)
+        return assessments.length > 0 && assessments.every(step => this.isCompleteStep(step.id))
     }
 
     public resetSteps = () => {
