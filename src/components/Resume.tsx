@@ -53,6 +53,9 @@ export const Resume: React.FC = observer(() => {
             setRiskText(indicator?.riskText ?? null)
             setRiskTextSecondary(indicator?.riskTextSecondary ?? null)
         }).catch(e => console.error(e))
+        // Fetched once on mount: MobX stores are stable references, and re-running
+        // this on every answer would refetch the questionnaire mid-flow.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stepStore.activeStep.id, uiStore.locale, uiStore.secondaryLocale])
 
     const recommendations = questionStore.getRecommendations(

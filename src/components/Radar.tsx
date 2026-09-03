@@ -86,6 +86,9 @@ export const Radar: React.FC = observer(() => {
             summaryStore.setError(error)
             summaryStore.setLoading(false)
         })
+        // Fetched once on mount: MobX stores are stable references, and re-running
+        // this on every answer would refetch the questionnaire mid-flow.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     if (summaryStore.isLoading) {

@@ -20,6 +20,9 @@ export const Assessment: React.FC = observer(() => {
             questionStore.setError(error)
             questionStore.setLoading(false)
         })
+        // Fetched once on mount: MobX stores are stable references, and re-running
+        // this on every answer would refetch the questionnaire mid-flow.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     if (questionStore.isLoading) {
