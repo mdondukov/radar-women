@@ -54,12 +54,14 @@ export class QuestionStore {
         return this._questions.filter(question => question.stepId === stepId)
     }
 
-    public getRecommendations = (stepId: number): string[] => {
+    public getRecommendations = (stepId: number, useSecondary: boolean = false): string[] => {
         const selects = this._selectAnswers.filter(a => a.stepId === stepId)
         const answers = this._questions.flatMap(question => question.answers)
             .filter(answer => !!selects.find(select => select.answerId === answer.id))
         const recommendations = answers
-            .map(answer => answer.recommendation)
+            .map(answer => useSecondary
+                ? (answer.recommendationSecondary ?? answer.recommendation)
+                : answer.recommendation)
             .filter((text): text is string => !!text)
         return Array.from(new Set(recommendations))
     }

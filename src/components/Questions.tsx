@@ -1,11 +1,14 @@
 import React from "react";
+import {useIntl} from "react-intl";
 import {Question} from "./Question";
 import {useStores} from "../hooks/use-stores";
 import {observer} from "mobx-react-lite";
 import {ResumeButton} from "./buttons/ResumeButton";
 
 export const Questions: React.FC = observer(() => {
+    const intl = useIntl()
     const {questionStore, stepStore} = useStores()
+    const isComplete = stepStore.isCompleteStep(stepStore.activeStep.id)
 
     return (
         <>
@@ -19,7 +22,14 @@ export const Questions: React.FC = observer(() => {
                 </div>
             </div>
 
-            <ResumeButton enable={stepStore.isCompleteStep(stepStore.activeStep.id)}/>
+            <ResumeButton enable={isComplete}/>
+            {
+                !isComplete && (
+                    <p className="mt-3 text-sm sm:text-base text-gray-600">
+                        {intl.formatMessage({id: "label.hint.answer.all"})}
+                    </p>
+                )
+            }
         </>
     )
 })

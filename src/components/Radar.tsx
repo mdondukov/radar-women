@@ -6,7 +6,8 @@ import {observer} from "mobx-react-lite";
 
 import {useStores} from "../hooks/use-stores";
 import {fetchIndicators} from "../http/api";
-import {Linkify, Loader} from "./index";
+import {ContentLangButton, Linkify, Loader} from "./index";
+import {pickLocale} from "../utils";
 import remarkGfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
 import {useIntl} from "react-intl";
@@ -72,7 +73,12 @@ export const Radar: React.FC = observer(() => {
 
     React.useEffect(() => {
         summaryStore.setLoading(true)
-        fetchIndicators(regionStore.selectRegion, questionStore.selectAnswers).then(response => {
+        fetchIndicators(
+            regionStore.selectRegion,
+            questionStore.selectAnswers,
+            uiStore.locale,
+            uiStore.secondaryLocale
+        ).then(response => {
             summaryStore.setIndicators(response.data.indicators)
             stepStore.setCompleteStep(stepStore.activeStep.id)
             summaryStore.setLoading(false)
@@ -190,13 +196,27 @@ export const Radar: React.FC = observer(() => {
                     {regionStore.getArea(regionStore.selectRegion.areaId).name}
                 </h3>
 
-                <p className="sm:text-xl text-gray-900 mb-6">{regionStore.getArea(regionStore.selectRegion.areaId).descr}</p>
+                <ContentLangButton/>
+
+                <p className="sm:text-xl text-gray-900 mb-6">
+                    {
+                        pickLocale(
+                            regionStore.getArea(regionStore.selectRegion.areaId).descr,
+                            regionStore.getArea(regionStore.selectRegion.areaId).descrSecondary,
+                            uiStore.isSecondaryContent
+                        )
+                    }
+                </p>
 
                 <div className={
                     (uiStore.windowDimensions.width < 640 ? "markdown-body mob" : "markdown-body") + " sm:text-xl text-gray-900"
                 }>
                     <ReactMarkdown
-                        children={regionStore.getArea(regionStore.selectRegion.areaId).impact}
+                        children={pickLocale(
+                            regionStore.getArea(regionStore.selectRegion.areaId).impact,
+                            regionStore.getArea(regionStore.selectRegion.areaId).impactSecondary,
+                            uiStore.isSecondaryContent
+                        ) ?? ""}
                         remarkPlugins={[remarkGfm]}
                     />
                 </div>
@@ -210,16 +230,28 @@ export const Radar: React.FC = observer(() => {
                         <h3 className="text-2xl sm:text-4xl text-blue-800 font-bold uppercase mb-6">
                             {intl.formatMessage({id: "label.recommendations"})}
                         </h3>
+                        <ContentLangButton/>
                         {
                             summaryStore.indicators.map(indicator => {
-                                const recommendations = questionStore.getRecommendations(indicator.stepId)
+                                const recommendations = questionStore.getRecommendations(
+                                    indicator.stepId, uiStore.isSecondaryContent
+                                )
                                 if (recommendations.length === 0 && !indicator.riskText) {
                                     return null
                                 }
+                                const riskText = pickLocale(
+                                    indicator.riskText, indicator.riskTextSecondary, uiStore.isSecondaryContent
+                                )
                                 return (
                                     <div key={indicator.stepId} className="radar-recommendation-item mb-8 last:mb-0">
                                         <h4 className="text-lg sm:text-3xl text-blue-800 font-bold uppercase mb-3">
-                                            {indicator.name}
+                                            {
+                                                pickLocale(
+                                                    indicator.name,
+                                                    indicator.nameSecondary,
+                                                    uiStore.isSecondaryContent
+                                                )
+                                            }
                                         </h4>
                                         {
                                             recommendations.length > 0 && (
@@ -235,10 +267,10 @@ export const Radar: React.FC = observer(() => {
                                             )
                                         }
                                         {
-                                            indicator.riskText && (
+                                            riskText && (
                                                 <div className="markdown-body sm:text-xl text-gray-900">
                                                     <ReactMarkdown
-                                                        children={indicator.riskText}
+                                                        children={riskText}
                                                         remarkPlugins={[remarkGfm]}
                                                     />
                                                 </div>

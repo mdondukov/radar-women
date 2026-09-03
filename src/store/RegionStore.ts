@@ -53,6 +53,11 @@ export class RegionStore {
         return this._selectRegion
     }
 
+    /** Empty selection is {-1, -1}, not null — see the constructor. */
+    public get isRegionSelected(): boolean {
+        return this._selectRegion.regionId > 0 && this._selectRegion.areaId > 0
+    }
+
     public get isLoading() {
         return this._loading
     }

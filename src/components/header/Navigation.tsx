@@ -9,7 +9,7 @@ import {MdAgriculture, MdSanitizer} from "react-icons/md";
 import {RiAlarmWarningFill} from "react-icons/ri";
 
 import {useStores} from "../../hooks/use-stores";
-import {IStep} from "../../types/step";
+import {IStep, StepType} from "../../types/step";
 import {AlertType, IAlert} from "../../types/alert";
 import {Alert} from "../common/Alert";
 
@@ -20,7 +20,19 @@ export const Navigation: React.FC = observer(() => {
     const intl = useIntl()
     const [alert, setAlert] = React.useState<IAlert | null>(null)
     const [isAlertOpen, setAlertOpen] = React.useState<boolean>(false)
-    const {stepStore, uiStore} = useStores()
+    const {stepStore, uiStore, regionStore} = useStores()
+
+    // Показатели заполняются в любом порядке (замечание эксперта), но регион
+    // остаётся первым — без него на радаре нечего показать в блоке «География»,
+    // — а радар открывается последним, когда все показатели отвечены.
+    const isAvailable = (step: IStep) => {
+        if (step.type === StepType.REGION) return true
+        if (step.type === StepType.RADAR) return stepStore.isAllAssessmentComplete
+        return regionStore.isRegionSelected
+    }
+
+    const denialMessage = (step: IStep) =>
+        step.type === StepType.RADAR ? "label.error.radar.incomplete" : "label.error.region.required"
 
     return (
         <>
@@ -43,24 +55,28 @@ export const Navigation: React.FC = observer(() => {
                                 }
                                 <div
                                     onClick={() => {
-                                        if (stepStore.isCompleteStep(step.id)) {
-                                            if (stepStore.isCompleteStep(stepStore.activeStep.id)) {
-                                                stepStore.setActive(step.id)
-                                            } else {
-                                                setAlert({
-                                                    type: AlertType.ERROR,
-                                                    name: intl.formatMessage({id: "label.error"}),
-                                                    desc: intl.formatMessage(
-                                                        {id: "label.error.step.incomplete"},
-                                                        {stepName: step.name})
-                                                })
-                                                setAlertOpen(true)
-                                            }
+                                        if (step.id === stepStore.activeStep.id) return
+                                        if (isAvailable(step)) {
+                                            stepStore.setActive(step.id)
+                                        } else {
+                                            setAlert({
+                                                type: AlertType.ERROR,
+                                                name: intl.formatMessage({id: "label.error"}),
+                                                desc: intl.formatMessage(
+                                                    {id: denialMessage(step)},
+                                                    {stepName: step.name})
+                                            })
+                                            setAlertOpen(true)
                                         }
                                     }}
                                     className={
                                         `flex-none rounded-full p-2 text-center inline-flex items-center ` +
-                                        getColor(step.id, stepStore.activeStep.id, stepStore.isCompleteStep(step.id))
+                                        getColor(
+                                            step.id,
+                                            stepStore.activeStep.id,
+                                            stepStore.isCompleteStep(step.id),
+                                            isAvailable(step)
+                                        )
                                     }
                                 >
                                     {getIcon(step, uiStore.windowDimensions.width)}
@@ -82,12 +98,21 @@ export const Navigation: React.FC = observer(() => {
     )
 })
 
-const getColor = (stepId: number, activeId: number, isCompleteStep: boolean) => {
+const getColor = (
+    stepId: number,
+    activeId: number,
+    isCompleteStep: boolean,
+    isAvailable: boolean
+) => {
     if (stepId === activeId)
         return "text-white bg-amber-300"
 
     if (isCompleteStep)
         return "text-blue-800 hover:text-blue-600 bg-white cursor-pointer"
+
+    // Доступен, но ещё не заполнен — бледнее пройденного, но кликабелен.
+    if (isAvailable)
+        return "text-blue-400 hover:text-blue-600 bg-white cursor-pointer"
 
     return "text-gray-300 bg-gray-50"
 }
