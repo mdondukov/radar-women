@@ -110,9 +110,25 @@ that isn't currently used and isn't actually functional as-is (its
 `RUN npm run build` line is commented out) — the deployed image is the
 `env/dev/docker/Dockerfile` one described above, same as `calc-web`'s.
 
-## Deployment
+## CI/CD
 
-No CI yet — deployment is manual, mirroring `calc-web`'s setup:
+`.github/workflows/ci.yml` runs on every push to `main` and every PR:
+`npm ci`, `tsc --noEmit`, `npm run build`. `deploy.yml` is manual
+(`workflow_dispatch`) — it builds a `linux/arm64` image, pushes it to
+`ghcr.io/<owner>/radar-women` as `:dev` and `:sha-<short>`, then over SSH runs
+`docker compose pull/up -d/restart proxy` on the server and checks that the
+site answers 200. Both run on `ubuntu-24.04-arm`, matching the aarch64 host.
+
+Secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`. Rollback = deploy an
+older `:sha-…` tag, every build publishes one.
+
+Note that CRA bakes `REACT_APP_*` at build time, so the image is environment
+specific — the committed `.env` (prod URL) is what CI bakes in, and
+`.dockerignore` keeps a developer's `.env.local` out of the build context.
+
+## Manual deployment (the pre-CI way, still works)
+
+Deployment used to be manual, mirroring `calc-web`'s setup:
 
 ```bash
 bash ./env/dev/docker/build.sh kg.biom/radar-women:dev

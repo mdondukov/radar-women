@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    # ARM runner: production runs on aarch64, so CI builds what actually ships.
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 18
+          cache: npm
+
+      - run: npm ci
+
+      - name: Types
+        run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Build
+        run: npm run build
