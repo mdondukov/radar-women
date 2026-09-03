@@ -5,6 +5,7 @@ import {useIntl} from "react-intl";
 
 import {useStores} from "../hooks/use-stores";
 import {IQuestion} from "../types/question";
+import {mirrorOf} from "../utils";
 import {IoIosCheckbox, IoIosCheckboxOutline, IoIosRadioButtonOff, IoIosRadioButtonOn} from "react-icons/io";
 
 interface QuestionProps {
@@ -15,6 +16,8 @@ interface QuestionProps {
 export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
     const intl = useIntl()
     const {stepStore, questionStore, uiStore, messageStore} = useStores()
+
+    const questionMirror = mirrorOf(question.content, question.contentSecondary)
 
     const select = (answerId: number) => {
         questionStore.setSelectAnswer(stepStore.activeStep.id, question.id, answerId, question.isMultiSelect)
@@ -40,9 +43,9 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                 {
                     // The mirror translation sits under the primary text in its own
                     // color, so a reader of either language can follow the same page.
-                    question.contentSecondary && (
+                    questionMirror && (
                         <p className="sm:text-xl font-medium text-blue-700 mb-0">
-                            {question.contentSecondary}
+                            {questionMirror}
                             {
                                 question.isMultiSelect &&
                                 ` (${messageStore.messages[uiStore.secondaryLocale]["label.multiSelect.hint"]})`
@@ -65,7 +68,7 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                                           }>
                                     <span className="block">{answer.content}</span>
                                     {
-                                        answer.contentSecondary && (
+                                        mirrorOf(answer.content, answer.contentSecondary) && (
                                             <span className="block text-blue-700 max-xl:text-xs text-sm">
                                                 {answer.contentSecondary}
                                             </span>
@@ -98,7 +101,7 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
                                     <div className="font-medium text-sm">
                                         <p>{answer.content}</p>
                                         {
-                                            answer.contentSecondary && (
+                                            mirrorOf(answer.content, answer.contentSecondary) && (
                                                 <p className="text-blue-700 text-xs">{answer.contentSecondary}</p>
                                             )
                                         }

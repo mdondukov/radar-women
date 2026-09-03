@@ -17,3 +17,11 @@ export const pickLocale = (
     secondary: string | null | undefined,
     useSecondary: boolean
 ): string | null => (useSecondary ? (secondary ?? primary) : primary)
+
+/** Mirror text worth showing: nothing when the translation is missing or is
+ *  identical to the primary text (numeric scales like "0 1 2 3" read the same
+ *  in both languages, and repeating them looks like a rendering bug). */
+export const mirrorOf = (
+    primary: string,
+    secondary: string | null | undefined
+): string | null => (secondary && secondary.trim() !== primary.trim() ? secondary : null)

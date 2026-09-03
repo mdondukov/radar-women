@@ -69,7 +69,7 @@ const RadarGridLabel: React.FC<RadarGridLabelProps> = ({id, anchor, animated: an
 
 export const Radar: React.FC = observer(() => {
     const intl = useIntl()
-    const {summaryStore, stepStore, regionStore, questionStore, uiStore} = useStores()
+    const {summaryStore, stepStore, regionStore, questionStore, uiStore, messageStore} = useStores()
 
     React.useEffect(() => {
         summaryStore.setLoading(true)
@@ -228,7 +228,7 @@ export const Radar: React.FC = observer(() => {
                 ) && (
                     <div className="bg-white rounded-xl p-10 mt-6 lg:mt-12">
                         <h3 className="text-2xl sm:text-4xl text-blue-800 font-bold uppercase mb-6">
-                            {intl.formatMessage({id: "label.recommendations"})}
+                            {messageStore.messages[uiStore.contentLocale]["label.recommendations"]}
                         </h3>
                         <ContentLangButton/>
                         {

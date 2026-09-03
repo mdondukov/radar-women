@@ -37,7 +37,7 @@ const INDICATOR_ILLUSTRATIONS: Record<string, string> = {
 
 export const Resume: React.FC = observer(() => {
     const intl = useIntl()
-    const {stepStore, questionStore, uiStore} = useStores()
+    const {stepStore, questionStore, uiStore, messageStore} = useStores()
     const [riskText, setRiskText] = React.useState<string | null>(null)
     const [riskTextSecondary, setRiskTextSecondary] = React.useState<string | null>(null)
 
@@ -96,7 +96,7 @@ export const Resume: React.FC = observer(() => {
                     (recommendations.length > 0 || riskText) && (
                         <div className="bg-white rounded-xl p-10 mb-6 lg:mb-12">
                             <h3 className="text-2xl sm:text-4xl text-blue-800 font-bold uppercase mb-6">
-                                {intl.formatMessage({id: "label.recommendations"})}
+                                {messageStore.messages[uiStore.contentLocale]["label.recommendations"]}
                             </h3>
                             {
                                 recommendations.length > 0 && (
