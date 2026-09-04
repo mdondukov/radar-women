@@ -21,8 +21,13 @@ export const Question: React.FC<QuestionProps> = observer(({question, num}) => {
 
     const select = (answerId: number) => {
         questionStore.setSelectAnswer(stepStore.activeStep.id, question.id, answerId, question.isMultiSelect)
+        // Unchecking the last option of a multi-select leaves its question
+        // unanswered again, so completion has to be recomputed both ways —
+        // it now gates the radar, not just the "Далее" button.
         if (questionStore.isAllQuestionsComplete(stepStore.activeStep.id)) {
             stepStore.setCompleteStep(stepStore.activeStep.id)
+        } else {
+            stepStore.setIncompleteStep(stepStore.activeStep.id)
         }
     }
 
