@@ -22,17 +22,21 @@ export const Navigation: React.FC = observer(() => {
     const [isAlertOpen, setAlertOpen] = React.useState<boolean>(false)
     const {stepStore, uiStore, regionStore} = useStores()
 
-    // Показатели заполняются в любом порядке (замечание эксперта), но регион
-    // остаётся первым — без него на радаре нечего показать в блоке «География»,
-    // — а радар открывается последним, когда все показатели отвечены.
+    // Ходить можно по уже пройденному — в обе стороны, чтобы вернуться и
+    // поправить ответ, не теряя дорогу обратно. Вперёд разделы открываются
+    // только по мере прохождения, а радар — лишь когда отвечены все показатели:
+    // иначе он усреднит пустые оси в ноль и покажет результат, которого никто
+    // не давал.
     const isAvailable = (step: IStep) => {
-        if (step.type === StepType.REGION) return true
         if (step.type === StepType.RADAR) return stepStore.isAllAssessmentComplete
-        return regionStore.isRegionSelected
+        return stepStore.isReachable(step.id)
     }
 
-    const denialMessage = (step: IStep) =>
-        step.type === StepType.RADAR ? "label.error.radar.incomplete" : "label.error.region.required"
+    const denialMessage = (step: IStep) => {
+        if (step.type === StepType.RADAR) return "label.error.radar.incomplete"
+        if (!regionStore.isRegionSelected) return "label.error.region.required"
+        return "label.error.step.locked"
+    }
 
     return (
         <>
@@ -64,7 +68,10 @@ export const Navigation: React.FC = observer(() => {
                                                 name: intl.formatMessage({id: "label.error"}),
                                                 desc: intl.formatMessage(
                                                     {id: denialMessage(step)},
-                                                    {stepName: step.name})
+                                                    {
+                                                        stepName: step.name,
+                                                        steps: stepStore.incompleteAssessments.join(", ")
+                                                    })
                                             })
                                             setAlertOpen(true)
                                         }

@@ -5,6 +5,7 @@ import {IStep, StepType} from "../types/step";
 export class StepStore {
     private _steps: IStep[]
     private _complete: number[]
+    private _furthestIndex: number
     private _activeStep: IStep | null
     private _resume: boolean
     private _loading: boolean
@@ -13,6 +14,7 @@ export class StepStore {
     constructor() {
         this._steps = []
         this._complete = []
+        this._furthestIndex = 0
         this._activeStep = null
         this._resume = false
         this._loading = true
@@ -31,7 +33,25 @@ export class StepStore {
         if (nextStep) {
             this._activeStep = nextStep
             this._resume = false
+            this._furthestIndex = Math.max(this._furthestIndex, this.indexOf(stepId))
         }
+    }
+
+    public indexOf = (stepId: number) => {
+        return this._steps.findIndex(step => step.id === stepId)
+    }
+
+    public getStep = (stepId: number) => {
+        return this._steps.find(step => step.id === stepId)
+    }
+
+    /** Steps up to the furthest one the reader has reached are open in both
+     *  directions: going back to fix an answer must not cost the way forward
+     *  again. Anything past that edge stays closed — the flow is meant to be
+     *  answered in order. */
+    public isReachable = (stepId: number) => {
+        const index = this.indexOf(stepId)
+        return index >= 0 && index <= this._furthestIndex
     }
 
     public setResume = (resume: boolean) => {
@@ -64,8 +84,16 @@ export class StepStore {
      *  are answered — otherwise the empty ones would be scored as zero and the
      *  chart would show a result the reader never gave. */
     public get isAllAssessmentComplete(): boolean {
-        const assessments = this._steps.filter(step => step.type === StepType.ASSESSMENT)
-        return assessments.length > 0 && assessments.every(step => this.isCompleteStep(step.id))
+        return this._steps.filter(step => step.type === StepType.ASSESSMENT).length > 0
+            && this.incompleteAssessments.length === 0
+    }
+
+    /** Names of the показатели still missing answers — shown to the reader who
+     *  tries to open the radar early, so they know where to go back to. */
+    public get incompleteAssessments(): string[] {
+        return this._steps
+            .filter(step => step.type === StepType.ASSESSMENT && !this.isCompleteStep(step.id))
+            .map(step => step.name)
     }
 
     public resetSteps = () => {
@@ -82,6 +110,7 @@ export class StepStore {
 
     public resetActiveStep = () => {
         this._activeStep = null
+        this._furthestIndex = 0
     }
 
     public get steps() {
