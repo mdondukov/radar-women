@@ -25,7 +25,7 @@ export const Questions: React.FC = observer(() => {
             <ResumeButton enable={isComplete}/>
             {
                 !isComplete && (
-                    <p className="mt-3 text-sm sm:text-base text-gray-600">
+                    <p className="mt-3 text-sm sm:text-base text-red-600">
                         {intl.formatMessage({id: "label.hint.answer.all"})}
                     </p>
                 )
