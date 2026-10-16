@@ -4,7 +4,7 @@ import {useIntl} from "react-intl";
 import {AiOutlineArrowRight, AiOutlineRadarChart} from "react-icons/ai";
 import {BsFillGeoAltFill} from "react-icons/bs";
 import {FaCity, FaDove, FaTree, FaUsers, FaVenus} from "react-icons/fa";
-import {GiTap} from "react-icons/gi";
+import {GiPlantWatering} from "react-icons/gi";
 import {MdAgriculture, MdSanitizer} from "react-icons/md";
 import {RiAlarmWarningFill} from "react-icons/ri";
 
@@ -135,7 +135,7 @@ const getIcon = (step: IStep, windowWidth: number) => {
         case "fergana-indicator-2": // Сельское хозяйство
             return <MdAgriculture size={iconSize} title={step.name}/>
         case "fergana-indicator-3": // Ирригационные ресурсы и инфраструктура
-            return <GiTap size={iconSize} title={step.name}/>
+            return <GiPlantWatering size={iconSize} title={step.name}/>
         case "fergana-indicator-4": // Вода, санитария, гигиена
             return <MdSanitizer size={iconSize} title={step.name}/>
         case "fergana-indicator-5": // Среда населённых пунктов
