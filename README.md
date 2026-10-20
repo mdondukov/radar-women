@@ -25,16 +25,18 @@ content fields that carry markdown (lists, links), Axios for HTTP.
 ```
 Home  →  Instruction  →  Poll
                            ├─ Region step        (map of Kyrgyzstan, once)
-                           ├─ Assessment step ×9  (Questions → Resume, per показатель)
+                           ├─ Assessment step ×9  (Questions → Resume, per indicator)
                            └─ Radar step          (chart + collected recommendations)
 ```
 
-Показатели can be filled in any order — the header icons are all clickable
-once a region is picked. The region stays first (the radar dereferences the
-chosen area) and the radar stays last: it averages every indicator, so
-opening it early would score unanswered ones as zero.
+Indicators are walked forward in order and revisited freely: the header
+icons lead back to any earlier step, even from a half-answered one, and
+forward only as far as the furthest step reached. The region stays first
+(the radar dereferences the chosen area) and the radar opens only once all
+nine indicators are answered, naming the missing ones: it averages every
+indicator, so opening it early would score unanswered ones as zero.
 
-Each "показатель" (indicator) is one assessment step: a `Questions` screen,
+Each indicator («показатель» in the content) is one assessment step: a `Questions` screen,
 then — once every question in that step is answered — a `Resume` screen
 (average score, an optional `step.descr` risk-zone narrative, and a
 "Рекомендации" card built from `answer.recommendation` + `indicator.risk_text`
@@ -166,7 +168,7 @@ up automatically, no component changes needed. Body/reading text is black
 interactive states. Headings use PT Sans Narrow, body text PT Sans (loaded
 from Google Fonts in `public/index.html`).
 
-Per-показатель illustrations (`src/assets/img/jamilya/indicator_*.png`) are
+Per-indicator illustrations (`src/assets/img/jamilya/indicator_*.png`) are
 picked by `step.code` in `Resume.tsx`'s `INDICATOR_ILLUSTRATIONS` map, with
 the generic `jamilya_instr.png` as a fallback for any step without
 dedicated art. These — and the Home/Instruction hero illustrations — are
