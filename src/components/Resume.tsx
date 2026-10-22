@@ -16,7 +16,8 @@ import indicatorPeacebuildingPng from "../assets/img/jamilya/indicator_peacebuil
 import {useIntl} from "react-intl";
 import {NextButton} from "./buttons/NextButton";
 import {Linkify} from "./common/Linkify";
-import {fetchIndicators} from "../http/api";
+import {fetchIndicators, isPollOutdated} from "../http/api";
+import {OutdatedNotice} from "./common/OutdatedNotice";
 import {ContentLangButton} from "./buttons/ContentLangButton";
 import {pickLocale} from "../utils";
 
@@ -52,7 +53,10 @@ export const Resume: React.FC = observer(() => {
             )
             setRiskText(indicator?.riskText ?? null)
             setRiskTextSecondary(indicator?.riskTextSecondary ?? null)
-        }).catch(e => console.error(e))
+        }).catch(e => {
+            if (isPollOutdated(e)) uiStore.setPollOutdated(true)
+            else console.error(e)
+        })
         // Fetched once on mount: MobX stores are stable references, and re-running
         // this on every answer would refetch the questionnaire mid-flow.
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,6 +80,7 @@ export const Resume: React.FC = observer(() => {
                         }
                     </p>
                 </div>
+                {uiStore.pollOutdated && <OutdatedNotice/>}
                 {
                     (stepStore.activeStep.descr || recommendations.length > 0 || riskText) && (
                         <ContentLangButton/>

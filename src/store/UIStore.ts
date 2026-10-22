@@ -12,10 +12,12 @@ export class UIStore {
     private _locale: string
     private _contentLocale: string
     private _windowDimensions: IWindowDimensions
+    private _pollOutdated: boolean
 
     constructor() {
         this._locale = getDefaultUserLocale()
         this._contentLocale = this._locale
+        this._pollOutdated = false
         this._windowDimensions = {
             width: window.innerWidth,
             height: window.innerHeight
@@ -39,6 +41,10 @@ export class UIStore {
         this._contentLocale = locale
     }
 
+    public setPollOutdated = (outdated: boolean) => {
+        this._pollOutdated = outdated
+    }
+
     public setWindowDimensions = (dimensions: IWindowDimensions) => {
         this._windowDimensions = dimensions
     }
@@ -58,6 +64,11 @@ export class UIStore {
 
     public get isSecondaryContent(): boolean {
         return this._contentLocale !== this._locale
+    }
+
+    /** The questionnaire changed on the server after this page loaded it. */
+    public get pollOutdated(): boolean {
+        return this._pollOutdated
     }
 
     public get windowDimensions(): IWindowDimensions {

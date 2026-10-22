@@ -5,8 +5,8 @@ import {animated} from "@react-spring/web"
 import {observer} from "mobx-react-lite";
 
 import {useStores} from "../hooks/use-stores";
-import {fetchIndicators} from "../http/api";
-import {ContentLangButton, Linkify, Loader} from "./index";
+import {fetchIndicators, isPollOutdated} from "../http/api";
+import {ContentLangButton, Linkify, Loader, OutdatedNotice} from "./index";
 import {pickLocale} from "../utils";
 import remarkGfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
@@ -83,7 +83,8 @@ export const Radar: React.FC = observer(() => {
             stepStore.setCompleteStep(stepStore.activeStep.id)
             summaryStore.setLoading(false)
         }).catch(error => {
-            summaryStore.setError(error)
+            if (isPollOutdated(error)) uiStore.setPollOutdated(true)
+            else summaryStore.setError(error)
             summaryStore.setLoading(false)
         })
         // Fetched once on mount: MobX stores are stable references, and re-running
@@ -97,6 +98,17 @@ export const Radar: React.FC = observer(() => {
 
     if (summaryStore.error) {
         throw Error(summaryStore.error)
+    }
+
+    if (uiStore.pollOutdated) {
+        return (
+            <>
+                <h1 className="text-3xl sm:text-5xl text-lime-500 font-bold uppercase mb-6 sm:mb-12">
+                    {stepStore.activeStep.name}
+                </h1>
+                <OutdatedNotice/>
+            </>
+        )
     }
 
     return (

@@ -1,3 +1,4 @@
+import axios from "axios";
 import {$host} from "./index";
 import {IRegionSelect} from "../types/region";
 import {IAnswerSelect} from "../types/question";
@@ -46,3 +47,9 @@ export const fetchIndicators = async (
     )
     return data
 }
+
+/** POST /summary answers 409 when the answers name ids the questionnaire no
+ *  longer has: the page was loaded before the content was re-seeded. The only
+ *  fix on the reader's side is to reload. */
+export const isPollOutdated = (error: unknown): boolean =>
+    axios.isAxiosError(error) && error.response?.status === 409
