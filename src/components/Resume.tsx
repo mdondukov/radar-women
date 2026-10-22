@@ -38,7 +38,7 @@ const INDICATOR_ILLUSTRATIONS: Record<string, string> = {
 
 export const Resume: React.FC = observer(() => {
     const intl = useIntl()
-    const {stepStore, questionStore, uiStore, messageStore} = useStores()
+    const {stepStore, questionStore, regionStore, uiStore, messageStore} = useStores()
     const [riskText, setRiskText] = React.useState<string | null>(null)
     const [riskTextSecondary, setRiskTextSecondary] = React.useState<string | null>(null)
 
@@ -47,7 +47,7 @@ export const Resume: React.FC = observer(() => {
         const answers = questionStore.selectAnswers.filter(a => a.stepId === stepId)
         setRiskText(null)
         setRiskTextSecondary(null)
-        fetchIndicators(null, answers, uiStore.locale, uiStore.secondaryLocale).then(response => {
+        fetchIndicators(regionStore.selectRegion, answers, uiStore.locale, uiStore.secondaryLocale, "step").then(response => {
             const indicator = response.data.indicators.find(
                 (i: { stepId: number }) => i.stepId === stepId
             )
