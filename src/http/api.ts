@@ -34,15 +34,25 @@ export const fetchAssessment = async (locale: string, secondaryLocale?: string) 
     return data
 }
 
+// Random per page load, sent with every summary so the server's statistics can
+// tie a reader's block results to their radar. Identifies no one: it is not
+// stored in the browser and is gone on reload.
+const SESSION_ID = typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
+
+export type SummarySource = "step" | "radar"
+
 export const fetchIndicators = async (
     region: IRegionSelect | null,
     answers: IAnswerSelect[],
     locale: string,
-    secondaryLocale?: string
+    secondaryLocale: string | undefined,
+    source: SummarySource
 ) => {
     const {data} = await $host.post(
         `${POLL_BASE}/summary`,
-        {region: region, answers: answers},
+        {region: region, answers: answers, sessionId: SESSION_ID, source: source},
         config(locale, secondaryLocale)
     )
     return data

@@ -77,7 +77,8 @@ export const Radar: React.FC = observer(() => {
             regionStore.selectRegion,
             questionStore.selectAnswers,
             uiStore.locale,
-            uiStore.secondaryLocale
+            uiStore.secondaryLocale,
+            "radar"
         ).then(response => {
             summaryStore.setIndicators(response.data.indicators)
             stepStore.setCompleteStep(stepStore.activeStep.id)
