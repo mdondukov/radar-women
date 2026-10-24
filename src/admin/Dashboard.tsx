@@ -7,6 +7,7 @@ import {
     bishkekTime,
     buildModel,
     Completion,
+    countDevices,
     Filters,
     filterCompletions,
     filtersFromParams,
@@ -341,6 +342,12 @@ export const Dashboard: React.FC<{stats: Stats}> = ({stats}) => {
                     <input type="date" className="ml-1 border rounded px-2 py-1" value={filters.to ?? ""}
                            onChange={e => setFilters({...filters, to: e.target.value || undefined})}/>
                 </label>
+                <label className="text-sm text-gray-700 flex items-center gap-1"
+                       title="Если с одного устройства прошли анкету несколько раз, в графиках и таблице останется только последнее прохождение">
+                    <input type="checkbox" checked={!!filters.latestPerDevice}
+                           onChange={e => setFilters({...filters, latestPerDevice: e.target.checked || undefined})}/>
+                    только последнее прохождение с устройства
+                </label>
                 {chips.map(c => (
                     <button key={c.label} onClick={c.clear}
                             className="text-sm bg-blue-50 text-blue-900 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-100">
@@ -358,8 +365,15 @@ export const Dashboard: React.FC<{stats: Stats}> = ({stats}) => {
             {/* KPIs */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
                 {[
-                    {label: "начали анкету", value: fmt(visits.length, 0), note: logVisits ? `из них ${logVisits} по логам до сбора` : ""},
-                    {label: "дошли до радара", value: fmt(reached, 0), note: `с ответами в базе: ${completions.length}`},
+                    {
+                        label: "начали анкету", value: fmt(visits.length, 0),
+                        note: [logVisits ? `из них ${logVisits} по логам до сбора` : "",
+                            `уникальных устройств: ${countDevices(visits)}`].filter(Boolean).join(" · "),
+                    },
+                    {
+                        label: "дошли до радара", value: fmt(reached, 0),
+                        note: `с ответами в базе: ${completions.length} · уникальных устройств: ${countDevices(completions)}`,
+                    },
                     {label: "доля дошедших", value: visits.length ? `${Math.round(100 * reached / visits.length)}%` : "-", note: ""},
                     {label: "средний балл", value: completions.length ? fmt(avg(completions.map(c => c.avg)), 2) : "-", note: "из 3, по завершенным"},
                 ].map(k => (
@@ -370,6 +384,11 @@ export const Dashboard: React.FC<{stats: Stats}> = ({stats}) => {
                     </div>
                 ))}
             </div>
+
+            <p className="text-xs text-gray-500 -mt-2">
+                Уникальные устройства считаются с 24 октября 2026: браузер хранит случайный ID. Это устройства, а не люди:
+                общий ноутбук на семинаре - одно устройство, режим инкогнито или очищенный браузер - новое.
+            </p>
 
             <Card title="Прохождения по дням"
                   hint="Клик по дню - фильтр по этому дню, повторный клик снимает. До пунктирной линии данные восстановлены по логам сервера: только сам факт прохождения, без ответов.">

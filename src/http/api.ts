@@ -41,6 +41,21 @@ const SESSION_ID = typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
     : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
 
+// Random per browser, kept in localStorage, so statistics can tell how many
+// distinct devices filled in the questionnaire. Counts devices, not people.
+// Falls back to the page session when storage is unavailable.
+const DEVICE_KEY = "radar.deviceId"
+const DEVICE_ID = (() => {
+    try {
+        const known = localStorage.getItem(DEVICE_KEY)
+        if (known) return known
+        localStorage.setItem(DEVICE_KEY, SESSION_ID)
+        return SESSION_ID
+    } catch {
+        return null
+    }
+})()
+
 export type SummarySource = "step" | "radar"
 
 export const fetchIndicators = async (
@@ -52,7 +67,7 @@ export const fetchIndicators = async (
 ) => {
     const {data} = await $host.post(
         `${POLL_BASE}/summary`,
-        {region: region, answers: answers, sessionId: SESSION_ID, source: source},
+        {region: region, answers: answers, sessionId: SESSION_ID, deviceId: DEVICE_ID, source: source},
         config(locale, secondaryLocale)
     )
     return data
