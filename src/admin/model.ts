@@ -16,6 +16,7 @@ export interface Completion {
     at: string
     day: string
     sessionId: string | null
+    deviceId: string | null
     locale: string
     device: string | null
     region: string | null
@@ -29,6 +30,7 @@ export interface Completion {
 export interface Visit {
     key: string
     day: string
+    deviceId: string | null       // unknown before 24 Oct 2026 and for log visits
     device: string | null
     locale: string | null         // unknown for log visits
     region: string | null         // unknown for log visits
@@ -71,6 +73,7 @@ export const buildModel = (stats: Stats): Model => {
                 at: last.created_at,
                 day: bishkekDay(last.created_at),
                 sessionId: last.session_id,
+                deviceId: last.device_id,
                 locale: last.locale,
                 device: last.device,
                 region: last.region_code,
@@ -83,6 +86,7 @@ export const buildModel = (stats: Stats): Model => {
         visits.push({
             key,
             day: bishkekDay(first.created_at),
+            deviceId: first.device_id,
             device: first.device,
             locale: first.locale,
             region: first.region_code,
@@ -96,6 +100,7 @@ export const buildModel = (stats: Stats): Model => {
         visits.push({
             key: `log-${i}`,
             day: bishkekDay(s.started_at),
+            deviceId: null,
             device: s.device,
             locale: null,
             region: null,
@@ -119,6 +124,8 @@ export interface Filters {
     device?: string
     zone?: {indicator: string, zone: Zone}
     answers: {question: string, answer: string}[]
+    /** keep only the latest finished questionnaire of each device */
+    latestPerDevice?: boolean
 }
 
 export const emptyFilters: Filters = {answers: []}
@@ -133,6 +140,7 @@ export const filtersFromParams = (p: URLSearchParams): Filters => {
         locale: p.get("locale") ?? undefined,
         device: p.get("device") ?? undefined,
         zone: zone && zone.length === 2 ? {indicator: zone[0], zone: zone[1] as Zone} : undefined,
+        latestPerDevice: p.get("latest") === "1" || undefined,
         answers: p.getAll("ans").map(v => {
             const [question, answer] = v.split("|")
             return {question, answer}
@@ -150,13 +158,34 @@ export const filtersToParams = (f: Filters): URLSearchParams => {
     if (f.device) p.set("device", f.device)
     if (f.zone) p.set("zone", `${f.zone.indicator}:${f.zone.zone}`)
     f.answers.forEach(a => p.append("ans", answerKey(a.question, a.answer)))
+    if (f.latestPerDevice) p.set("latest", "1")
     return p
 }
 
 const inPeriod = (day: string, f: Filters) =>
     (!f.from || day >= f.from) && (!f.to || day <= f.to)
 
-export const filterCompletions = (items: Completion[], f: Filters): Completion[] =>
+/** Distinct devices among the items; items without a device id are not counted. */
+export const countDevices = (items: {deviceId: string | null}[]): number =>
+    new Set(items.map(i => i.deviceId).filter(Boolean)).size
+
+/** Items are newest first, so the first one seen per device is its latest. */
+const latestPerDevice = (items: Completion[]): Completion[] => {
+    const seen = new Set<string>()
+    return items.filter(c => {
+        if (!c.deviceId) return true
+        if (seen.has(c.deviceId)) return false
+        seen.add(c.deviceId)
+        return true
+    })
+}
+
+export const filterCompletions = (items: Completion[], f: Filters): Completion[] => {
+    const matched = matchCompletions(items, f)
+    return f.latestPerDevice ? latestPerDevice(matched) : matched
+}
+
+const matchCompletions = (items: Completion[], f: Filters): Completion[] =>
     items.filter(c =>
         inPeriod(c.day, f)
         && (!f.region || c.region === f.region)
@@ -182,4 +211,5 @@ export const filterVisits = (items: Visit[], f: Filters, completions: Completion
 }
 
 export const hasFilters = (f: Filters) =>
-    !!(f.from || f.to || f.region || f.area || f.locale || f.device || f.zone || f.answers.length)
+    !!(f.from || f.to || f.region || f.area || f.locale || f.device || f.zone || f.answers.length
+        || f.latestPerDevice)

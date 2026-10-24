@@ -40,6 +40,9 @@ const Home: React.FC = observer(() => {
                         <ReactMarkdown children={intro} remarkPlugins={[remarkGfm]}/>
                     </div>
                     <MainButton path="/poll" name={intl.formatMessage({id: "label.start"})}/>
+                    <p className="text-sm text-gray-500 mt-4 max-w-md">
+                        {intl.formatMessage({id: "label.privacy"})}
+                    </p>
                 </div>
                 <div className="xl:col-span-6 mt-6 lg:mt-12 xl:mt-0 relative">
                     <div className="grid justify-items-stretch">

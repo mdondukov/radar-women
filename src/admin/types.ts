@@ -35,6 +35,7 @@ export interface SubmissionRow {
     id: number
     created_at: string
     session_id: string | null
+    device_id: string | null
     source: "step" | "radar" | null
     is_complete: boolean
     locale: string
