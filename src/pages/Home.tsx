@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {useIntl} from "react-intl";
 
-import {InstrButton, LangButton, MainButton, VideoBlock} from "../components";
+import {InstrButton, LangButton, MainButton, VideoCard} from "../components";
 import jamStartPng from "../assets/img/jamilya/jamilya_start.png"
 import {useStores} from "../hooks/use-stores";
 
@@ -36,12 +36,23 @@ const Home: React.FC = observer(() => {
                     <h1 className="text-3xl sm:text-5xl text-lime-500 font-bold uppercase mb-6 lg:mb-12">
                         {intl.formatMessage({id: "page.home.name"})}
                     </h1>
-                    <VideoBlock
-                        name="intro"
-                        locale={locale}
-                        title={intl.formatMessage({id: "page.home.name"})}
-                        className="mb-6 lg:mb-12"
-                    />
+                    <div className="mb-6 lg:mb-12 xl:pr-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
+                            {(["intro", "tutorial"] as const).map((name) => (
+                                <VideoCard
+                                    key={`${name}-${locale}`}
+                                    name={name}
+                                    locale={locale}
+                                    title={intl.formatMessage({id: `label.video.${name}.title`})}
+                                    kind={intl.formatMessage({id: `label.video.${name}.kind`})}
+                                    closeLabel={intl.formatMessage({id: "label.close"})}
+                                />
+                            ))}
+                        </div>
+                        <p className="text-sm text-gray-600 mt-2.5">
+                            {intl.formatMessage({id: "label.video.hint"})}
+                        </p>
+                    </div>
                     <div className="markdown-body sm:text-2xl font-medium text-gray-900 mb-6 lg:mb-12">
                         <ReactMarkdown children={intro} remarkPlugins={[remarkGfm]}/>
                     </div>

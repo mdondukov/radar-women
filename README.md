@@ -97,10 +97,13 @@ touching the tracked file.
 
 ## Videos
 
-The start page shows an intro video and the instruction page a walkthrough,
-in the selected locale. `VideoBlock` loads `/video/<name>-<locale>.mp4` with
-`<name>-<locale>.jpg` as the poster, where `<name>` is `intro` or `tutorial`
-and `<locale>` is `ru` or `ky`.
+The start page shows two video cards (intro and walkthrough); a tap opens the
+video in a dialog. The instruction page shows the walkthrough inline. Both use
+the selected locale: `VideoCard` and `VideoBlock` load
+`/video/<name>-<locale>.mp4` with `<name>-<locale>.jpg` as the poster, where
+`<name>` is `intro` or `tutorial` and `<locale>` is `ru` or `ky`. The card
+durations are set in `VideoCard.tsx`; update them when a file is replaced by a
+new cut.
 
 The files are not in git or in the Docker image (both ignore `public/video/`).
 In production the host nginx serves them from a directory on disk (location
