@@ -16,10 +16,14 @@ type ModalProps = {
 // outside the panel; the page under it does not scroll while it is open.
 export const Modal: React.FC<ModalProps> = ({setOpen, children, label, closeLabel = "Close", className}) => {
     const close = React.useCallback(() => setOpen(false), [setOpen])
+    // Close on a click outside only when the press also started outside: a
+    // drag from the video that ends on the backdrop is not a click outside.
+    const pressedOutside = React.useRef(false)
 
     React.useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === "Escape") close()
+            // Escape in native fullscreen leaves fullscreen, not the dialog.
+            if (e.key === "Escape" && !document.fullscreenElement) close()
         }
         document.addEventListener("keydown", onKey)
         const overflow = document.body.style.overflow
@@ -33,14 +37,18 @@ export const Modal: React.FC<ModalProps> = ({setOpen, children, label, closeLabe
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4"
-            onClick={close}
+            onMouseDown={(e) => {
+                pressedOutside.current = e.target === e.currentTarget
+            }}
+            onClick={(e) => {
+                if (e.target === e.currentTarget && pressedOutside.current) close()
+            }}
         >
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-label={label}
                 className={`relative w-full ${className ?? "max-w-3xl rounded-xl bg-white p-10 shadow-2xl"}`}
-                onClick={(e) => e.stopPropagation()}
             >
                 <button
                     type="button"

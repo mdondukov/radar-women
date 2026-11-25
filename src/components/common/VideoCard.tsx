@@ -1,4 +1,5 @@
 import React from "react";
+import {flushSync} from "react-dom";
 import {Modal} from "./Modal";
 import {videoBase, VideoName} from "./VideoBlock";
 
@@ -23,14 +24,31 @@ interface VideoCardProps {
 // stops the sound.
 export const VideoCard: React.FC<VideoCardProps> = ({name, locale, title, kind, closeLabel}) => {
     const [open, setOpen] = React.useState(false)
+    const cardRef = React.useRef<HTMLButtonElement>(null)
+    const videoRef = React.useRef<HTMLVideoElement>(null)
     const base = videoBase(name, locale)
     const duration = DURATIONS[name][locale]
+
+    // iOS Safari plays a video with sound only when play() is called inside
+    // the tap itself; the autoPlay attribute alone is ignored there. So the
+    // dialog is rendered synchronously and play() is called in the handler;
+    // autoPlay stays as a fallback.
+    const openVideo = () => {
+        flushSync(() => setOpen(true))
+        videoRef.current?.play().catch(() => undefined)
+    }
+
+    const closeVideo = React.useCallback((value: boolean) => {
+        setOpen(value)
+        if (!value) cardRef.current?.focus()
+    }, [])
 
     return (
         <>
             <button
+                ref={cardRef}
                 type="button"
-                onClick={() => setOpen(true)}
+                onClick={openVideo}
                 className="flex sm:flex-col items-center sm:items-stretch gap-3 w-full p-2 sm:p-2.5 bg-white rounded-xl text-left shadow-sm hover:shadow-md transition-shadow"
             >
                 <span className="relative flex-none w-32 sm:w-full aspect-video rounded-lg overflow-hidden bg-black">
@@ -49,8 +67,9 @@ export const VideoCard: React.FC<VideoCardProps> = ({name, locale, title, kind, 
                 </span>
             </button>
             {open && (
-                <Modal setOpen={setOpen} label={title} closeLabel={closeLabel} className="max-w-5xl">
+                <Modal setOpen={closeVideo} label={title} closeLabel={closeLabel} className="max-w-5xl">
                     <video
+                        ref={videoRef}
                         src={`${base}.mp4`}
                         poster={`${base}.jpg`}
                         controls
