@@ -7,6 +7,8 @@ const VIDEO_BASE = "/video"
 
 export type VideoName = "intro" | "tutorial"
 
+export const videoBase = (name: VideoName, locale: string) => `${VIDEO_BASE}/${name}-${locale}`
+
 interface VideoBlockProps {
     name: VideoName
     locale: string
@@ -15,7 +17,7 @@ interface VideoBlockProps {
 }
 
 export const VideoBlock: React.FC<VideoBlockProps> = ({name, locale, title, className}: VideoBlockProps) => {
-    const base = `${VIDEO_BASE}/${name}-${locale}`
+    const base = videoBase(name, locale)
 
     return (
         <div className={className}>
