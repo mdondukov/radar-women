@@ -22,3 +22,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# videos are served from the host, not the repository (see README)
+/public/video

@@ -6,7 +6,7 @@ import {useIntl} from "react-intl";
 
 import jamInstPng from "../assets/img/jamilya/jamilya_instr.png";
 import {useStores} from "../hooks/use-stores";
-import {LangButton, MainButton} from "../components";
+import {LangButton, MainButton, VideoBlock} from "../components";
 import {Link} from "react-router-dom";
 import {IoMdRocket} from "react-icons/io";
 
@@ -42,6 +42,12 @@ const Instruction: React.FC = observer(() => {
                     <h1 className="text-3xl sm:text-5xl text-lime-500 font-bold uppercase mb-6 lg:mb-12">
                         {intl.formatMessage({id: "page.instr.name"})}
                     </h1>
+                    <VideoBlock
+                        name="tutorial"
+                        locale={locale}
+                        title={intl.formatMessage({id: "page.instr.name"})}
+                        className="mb-6 lg:mb-12"
+                    />
                     <div className="markdown-body sm:text-2xl font-medium text-gray-900 mb-6 lg:mb-12">
                         <ReactMarkdown children={tutorial} remarkPlugins={[remarkGfm]}/>
                     </div>

@@ -95,6 +95,32 @@ The committed `.env` holds the production values instead
 every environment except `test`, so local dev always overrides prod without
 touching the tracked file.
 
+## Videos
+
+The start page shows an intro video and the instruction page a walkthrough,
+in the selected locale. `VideoBlock` loads `/video/<name>-<locale>.mp4` with
+`<name>-<locale>.jpg` as the poster, where `<name>` is `intro` or `tutorial`
+and `<locale>` is `ru` or `ky`.
+
+The files are not in git or in the Docker image (both ignore `public/video/`).
+In production the host nginx serves them from a directory on disk (location
+`/video/`; the path is in `products/radar/ARCHITECTURE.md` of the tracker).
+Locally, put the same eight files into `public/video/`.
+
+Encoding (720p H.264, AAC, metadata at the front so playback starts before
+the whole file is loaded):
+
+```bash
+ffmpeg -i source.mp4 -vf scale=-2:720 -c:v libx264 -preset slow -crf 26 \
+  -maxrate 1800k -bufsize 3600k -pix_fmt yuv420p -c:a aac -b:a 96k -ac 2 \
+  -movflags +faststart tutorial-ru.mp4
+ffmpeg -ss 4 -i source.mp4 -vf scale=960:-2 -frames:v 1 -q:v 5 tutorial-ru.jpg
+```
+
+To replace a video, upload a file with the same name:
+the nginx location sends `Cache-Control: max-age` of one day, so phones pick
+the new file up within a day.
+
 ## Docker build
 
 ```bash
