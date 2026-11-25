@@ -114,7 +114,7 @@ the whole file is loaded):
 ffmpeg -i source.mp4 -vf scale=-2:720 -c:v libx264 -preset slow -crf 26 \
   -maxrate 1800k -bufsize 3600k -pix_fmt yuv420p -c:a aac -b:a 96k -ac 2 \
   -movflags +faststart tutorial-ru.mp4
-ffmpeg -ss 4 -i source.mp4 -vf scale=1280:-2 -frames:v 1 -q:v 4 tutorial-ru.jpg
+ffmpeg -ss 4 -i source.mp4 -vf scale=960:-2 -frames:v 1 -q:v 5 tutorial-ru.jpg
 ```
 
 To replace a video, upload a file with the same name:
